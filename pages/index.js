@@ -7,6 +7,10 @@ export default function HomePage() {
   const [account, setAccount] = useState(undefined);
   const [atm, setATM] = useState(undefined);
   const [balance, setBalance] = useState(undefined);
+  const [warning, setWarning] = useState("");
+  const [owner, setOwner] = useState("");
+  const [transactionHistory, setTransactionHistory] = useState([]);
+
 
   const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const atmABI = atm_abi.abi;
@@ -53,6 +57,21 @@ export default function HomePage() {
     setATM(atmContract);
   }
 
+  
+  const getOwner = async() => {
+    if (atm) {
+      const ownerAddress = await atm.getOwner();
+      setOwner(ownerAddress);
+    }
+  }
+
+  const getTransactionHistory = async() => {
+    if (atm) {
+      const history = await atm.getTransactionHistory();
+      setTransactionHistory(history);
+    }
+  }
+
   const getBalance = async() => {
     if (atm) {
       setBalance((await atm.getBalance()).toNumber());
@@ -96,12 +115,24 @@ export default function HomePage() {
 
     return (
       <div>
-        {/* <h1>Welcome to Utkarsh's ATM powered by Metacrafters</h1> */}
         <p>Your Account: {account}</p>
         <p>Your Balance: {balance}</p>
+        {warning && <p style={{color: "red"}}>{warning}</p>}
+        <p>Owner: {owner}</p>
+        <ul>
+          {transactionHistory.map((tx, index) => (
+            <li key={index}>
+              {tx.type} from {tx.sender} to {tx.receiver} for {tx.amount} ETH
+            </li>
+         ))}
+        </ul>
         <div style={{display: "flex", justifyContent: "center", gap: "20px", marginBottom: "20px"}}>
           <button onClick={withdraw} style={{backgroundColor: "#4CAF50", color: "#fff", padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer"}}>Withdraw 1 ETH</button>
           <button onClick={deposit} style={{backgroundColor: "#4CAF50", color: "#fff", padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer"}}>Deposit 1 ETH</button>
+          {/* <button onClick={transferOwnership}>Transfer Ownership</button> */}
+        <button onClick={getOwner}>Get Owner</button>
+        <button onClick={getTransactionHistory}>Get Transaction History</button>
+       
         </div>
         <button onClick={disconnectAccount} style={{backgroundColor: "#ff0000", color: "#fff", padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer"}}>Disconnect Account</button>
       </div>
