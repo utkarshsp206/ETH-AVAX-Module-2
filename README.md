@@ -44,6 +44,11 @@ Typically at http://localhost:3000/
 Utkarsh Singh
 Chandigarh University - University Institute of Engineering
 
+## Screenshots
+
+![alt text](image-1.png)
+
+![alt text](image.png)
 
 
 
