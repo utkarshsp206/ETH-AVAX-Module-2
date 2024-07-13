@@ -13,7 +13,7 @@ The smart contract has following functionalities:
 2. Depositing Ether
 3. Getting the balance
 4. Getting the owner
-5. Getting Transaction History
+5. User can decide how much ETH to be deposited or withdrawn
 6. Keeping a check for minimum and maximum balance
 
 ## About the Frontend
@@ -25,7 +25,7 @@ The frontend for the above smart contract has the following functionalities:
 5. Buttons to withdraw and desposit amount in metamask wallet
 6. Get the owner
 7. Disconnect the account
-8. Get Transaction History
+8.Decide the amount of ETH
 
 ## Getting Started
 
