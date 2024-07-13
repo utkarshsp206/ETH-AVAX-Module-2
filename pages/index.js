@@ -9,7 +9,7 @@ export default function HomePage() {
   const [balance, setBalance] = useState(undefined);
   const [warning, setWarning] = useState("");
   const [owner, setOwner] = useState("");
-  const [transactionHistory, setTransactionHistory] = useState([]);
+
 
 
   const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -74,25 +74,28 @@ export default function HomePage() {
 
   const getBalance = async() => {
     if (atm) {
-      setBalance((await atm.getBalance()).toNumber());
+      const balance = await atm.getBalance();
+      const formattedBalance = ethers.utils.formatEther(balance);
+      setBalance(Math.floor(parseFloat(formattedBalance)));
     }
   }
 
-  const deposit = async() => {
-    if (atm) {
-      let tx = await atm.deposit(1);
-      await tx.wait()
-      getBalance();
-    }
-  }
 
-  const withdraw = async() => {
+  const withdraw = async () => {
     if (atm) {
-      let tx = await atm.withdraw(1);
-      await tx.wait()
+      let tx = await atm.withdraw(ethers.utils.parseEther(amount));
+      await tx.wait();
       getBalance();
     }
-  }
+  };
+  
+  const deposit = async () => {
+    if (atm) {
+      let tx = await atm.deposit(ethers.utils.parseEther(amount));
+      await tx.wait();
+      getBalance();
+    }
+  };
 
   const disconnectAccount = async() => {
     setAccount(undefined);
@@ -119,21 +122,26 @@ export default function HomePage() {
         <p>Your Balance: {balance}</p>
         {warning && <p style={{color: "red"}}>{warning}</p>}
         <p>Owner: {owner}</p>
-        <ul>
-          {transactionHistory.map((tx, index) => (
-            <li key={index}>
-              {tx.type} from {tx.sender} to {tx.receiver} for {tx.amount} ETH
-            </li>
-         ))}
-        </ul>
-        <div style={{display: "flex", justifyContent: "center", gap: "20px", marginBottom: "20px"}}>
-          <button onClick={withdraw} style={{backgroundColor: "#4CAF50", color: "#fff", padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer"}}>Withdraw 1 ETH</button>
-          <button onClick={deposit} style={{backgroundColor: "#4CAF50", color: "#fff", padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer"}}>Deposit 1 ETH</button>
-          {/* <button onClick={transferOwnership}>Transfer Ownership</button> */}
-        <button onClick={getOwner}>Get Owner</button>
-        <button onClick={getTransactionHistory}>Get Transaction History</button>
+
+        <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginBottom: "20px" }}>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Enter amount of ETH"
+            style={{ padding: "10px", borderRadius: "10px", border: "none" }}
+          />
+          <button onClick={() => withdraw(amount)} style={{ backgroundColor: "#4CAF50", color: "#fff", padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer" }}>
+            Withdraw
+          </button>
+          <button onClick={() => deposit(amount)} style={{ backgroundColor: "#4CAF50", color: "#fff", padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer" }}>
+            Deposit
+          </button> 
+        <button onClick={getOwner} style={{ backgroundColor: "#4CAF50", color: "#fff", padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer" }}>Get Owner</button>
        
         </div>
+        <button onClick={disconnectAccount} style={{backgroundColor: "#ff0000", color: "#fff", padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer"}}>Disconnect Account</button>
+      </div>
         <button onClick={disconnectAccount} style={{backgroundColor: "#ff0000", color: "#fff", padding: "10px 20px", borderRadius: "10px", border: "none", cursor: "pointer"}}>Disconnect Account</button>
       </div>
     )
