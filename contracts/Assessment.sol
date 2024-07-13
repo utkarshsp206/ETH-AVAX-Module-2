@@ -10,16 +10,7 @@ contract Assessment {
     event Deposit(uint256 amount);
     event Withdraw(uint256 amount);
     event Warning(string message);
-    event OwnershipTransferred(address newOwner);
 
-    struct Transaction {
-        address sender;
-        address receiver;
-        uint256 amount;
-        string type; // deposit, withdrawal, or ownership transfer
-    }
-
-    Transaction[] public transactionHistory;
 
     constructor(uint initBalance) payable {
         owner = payable(msg.sender);
@@ -32,10 +23,6 @@ contract Assessment {
 
     function getOwner() public view returns(address) {
         return owner;
-    }
-
-    function getTransactionHistory() public view returns(Transaction[] memory) {
-        return transactionHistory;
     }
 
     function deposit(uint256 _amount) public payable {
@@ -60,8 +47,7 @@ contract Assessment {
         // emit the event
         emit Deposit(_amount);
 
-        // add transaction to history
-        transactionHistory.push(Transaction(msg.sender, address(this), _amount, "deposit"));
+    
     }
 
     function withdraw(uint256 _withdrawAmount) public {
@@ -83,17 +69,11 @@ contract Assessment {
 
         // emit the event
         emit Withdraw(_withdrawAmount);
-
-        // add transaction to history
-        transactionHistory.push(Transaction(address(this), msg.sender, _withdrawAmount, "withdrawal"));
     }
 
     function transferOwnership(address newOwner) public {
         require(msg.sender == owner, "You are not the owner of this account");
         owner = payable(newOwner);
         emit OwnershipTransferred(newOwner);
-
-        // add transaction to history
-        transactionHistory.push(Transaction(msg.sender, newOwner, 0, "ownership transfer"));
     }
 }
