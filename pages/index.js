@@ -74,25 +74,28 @@ export default function HomePage() {
 
   const getBalance = async() => {
     if (atm) {
-      setBalance((await atm.getBalance()).toNumber());
+      const balance = await atm.getBalance();
+      const formattedBalance = ethers.utils.formatEther(balance);
+      setBalance(Math.floor(parseFloat(formattedBalance)));
     }
   }
 
-  const deposit = async() => {
-    if (atm) {
-      let tx = await atm.deposit(1);
-      await tx.wait()
-      getBalance();
-    }
-  }
 
-  const withdraw = async() => {
+  const withdraw = async () => {
     if (atm) {
-      let tx = await atm.withdraw(1);
-      await tx.wait()
+      let tx = await atm.withdraw(ethers.utils.parseEther(amount));
+      await tx.wait();
       getBalance();
     }
-  }
+  };
+  
+  const deposit = async () => {
+    if (atm) {
+      let tx = await atm.deposit(ethers.utils.parseEther(amount));
+      await tx.wait();
+      getBalance();
+    }
+  };
 
   const disconnectAccount = async() => {
     setAccount(undefined);
